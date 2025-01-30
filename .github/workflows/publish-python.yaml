@@ -1,0 +1,122 @@
+name: Build and Publish Wheels
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-pure-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Copy README.md
+        run: cp docs/README.md python/
+
+      - name: Build pure python wheel with no binary included
+        run: |
+          cd python
+          sed -i 's/^.*has_ext_modules=lambda:.*$/setup(has_ext_modules=lambda: False)/' setup.py
+          uv build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-pure-python
+          path: dist/*
+
+  build-multiarch:
+    runs-on: ${{ matrix.platform.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - CIBW_PLATFORM: "macos"
+          CIBW_ARCHS: "arm64"
+          os: "macos-latest"
+        - CIBW_PLATFORM: "macos"
+          CIBW_ARCHS: "x86_64"
+          os: "macos-latest"
+        - CIBW_PLATFORM: "linux"
+          CIBW_ARCHS: "x86_64"
+          os: "ubuntu-latest"
+        # TODO enable once repo is public
+        # - CIBW_PLATFORM: "linux"
+        #   CIBW_ARCHS: "aarch64"
+        #   os: "ubuntu-24.04-arm"
+    env:
+      CIBW_PLATFORM: ${{ matrix.platform.CIBW_PLATFORM }}
+      CIBW_ARCHS: ${{ matrix.platform.CIBW_ARCHS }}
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          # 'latest', 'nightly', or a semver
+          version: "~> v2"
+          workdir: ./go
+          args: release --clean --snapshot
+
+      - name: Copy binaries from Go to Python directory
+        run: mkdir -p python/bin && cp -r go/dist/* python/bin/
+
+      - name: Copy README.md
+        run: cp docs/README.md python/
+
+      - name: Build wheels
+        run: cd python && uv run --with cibuildwheel cibuildwheel --output-dir dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.platform.os }}-${{ matrix.platform.CIBW_ARCHS }}-${{ strategy.job-index }}
+          path: ./python/dist/*.whl
+
+  upload_pypi:
+    needs: [build-multiarch, build-pure-python]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    # if: github.event_name == 'release' && github.event.action == 'published'
+    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          # unpacks all CIBW artifacts into dist/
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          packages-dir: dist

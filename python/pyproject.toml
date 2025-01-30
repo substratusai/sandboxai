@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sandboxai-client"
+version = "0.0.1-alpha1"
+description = "Secure sandboxes for AI agents and LLMs."
+
+requires-python = ">=3.10"
+dynamic = ["readme"]
+
+dependencies = [
+    "pydantic",
+    "requests",
+]
+
+[tool.setuptools.dynamic]
+readme = {file = "README.md", content-type = "text/markdown"}
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+    "ruff>=0.9.3",
+]
+examples = [
+    "swarm@git+https://github.com/openai/swarm.git"
+]
+
+[project.urls]
+Homepage = "https://github.com/substratusai/sandboxai"
+Repository = "https://github.com/substratusai/sandboxai.git"
+Documentation = "https://github.com/substratusai/sandboxai"
+
+[project.optional-dependencies]
+examples = [
+    "swarm",
+]
+
+[tool.uv.sources]
+swarm = { git = "https://github.com/openai/swarm.git" }
+
+# [tool.setuptools]
+# packages = ["sandboxai"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sandboxai", "sandboxai*"]
+exclude = ["sandboxai.test.e2e", "sandboxai.bin"]
+namespaces = true  # to disable scanning PEP 420 namespaces (true by default)
+
+[tool.setuptools.package-data]
+"sandboxai" = ["bin/sandboxaid"]
+
+
+[tool.cibuildwheel]
+before-build = "bash scripts/prepare_binary.sh"
+environment-pass = ["CIBW_PLATFORM", "CIBW_ARCHS"]
+build-frontend = "build[uv]"
+
+[tool.cibuildwheel.macos.environment]
+CIBW_PLATFORM = "macos"
+
+[tool.cibuildwheel.environment]
+PYTHONPATH = "{project}"

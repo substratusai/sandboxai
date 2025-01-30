@@ -1,0 +1,7 @@
+package: v1
+output: types.gen.go
+generate:
+  models: true
+output-options:
+  skip-prune: true
+  name-normalizer: ToCamelCaseWithInitialisms

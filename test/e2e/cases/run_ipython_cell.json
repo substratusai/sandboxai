@@ -1,0 +1,74 @@
+[
+    {
+        "name": "simple print",
+        "code": "print(123)",
+        "split": false,
+        "expected_output": "123\n",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "simple split print",
+        "code": "print(123)",
+        "split": true,
+        "expected_output": "",
+        "expected_stdout": "123\n",
+        "expected_stderr": ""
+    },
+    {
+        "name": "import sys",
+        "code": "import sys",
+        "split": false,
+        "expected_output": "",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "stderr print",
+        "code": "print(123, file=sys.stderr)",
+        "split": false,
+        "expected_output": "123\n",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "stderr split print",
+        "code": "print(123, file=sys.stderr)",
+        "split": true,
+        "expected_output": "",
+        "expected_stdout": "",
+        "expected_stderr": "123\n"
+    },
+    {
+        "name": "unknown var",
+        "code": "foo",
+        "split": false,
+        "expected_output_contains": "name 'foo' is not defined",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "set var",
+        "code": "foo = 123",
+        "split": false,
+        "expected_output": "",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "evaluate var",
+        "code": "foo",
+        "split": false,
+        "expected_output": "Out[1]: 123\n",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "shell with env",
+        "code": "! echo -n $MY_TEST_VAR",
+        "split": false,
+        "expected_output": "test-value",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    }
+]

@@ -1,0 +1,29 @@
+[
+    {
+        "name": "basic echo",
+        "command": "echo hello",
+        "split": false,
+        "expected_output": "hello\n",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    },
+    {
+        "name": "echo to stderr",
+        "command": ">&2 echo 'error'",
+        "expected_output": "error\n"
+    },
+    {
+        "name": "echo to stderr with split output",
+        "command": ">&2 echo 'error'",
+        "split": true,
+        "expected_stderr": "error\n"
+    },
+    {
+        "name": "echo env var",
+        "command": "echo -n $MY_TEST_VAR",
+        "split": false,
+        "expected_output": "test-value",
+        "expected_stdout": "",
+        "expected_stderr": ""
+    }
+]

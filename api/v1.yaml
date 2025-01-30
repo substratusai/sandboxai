@@ -1,0 +1,281 @@
+# SandboxAI API Specification
+#
+# All Operations:
+#
+# * Should accept types suffixed with "Request".
+#
+# RPC operations:
+#
+# * Should return types suffixed with "Result".
+#
+# Resource operations:
+#
+# * Should return the relevant "resource" type.
+#
+# Resource types:
+#
+# * Should contain "spec" and "status" fields.
+# * The "spec" field should contain user-specified parameters.
+# * The "spec" field should be reused for create operations.
+#
+# Create operations:
+#
+# * Should accept creation-specific request that contain the relevant resource "spec".
+# * Should return the relevant "resource" type.
+#
+# Get operations:
+#
+# * Should return the relevant "resource" type.
+#
+openapi: '3.0.3'
+info:
+  title: SandboxAI
+  version: '1.0'
+  description: API for managing sandboxes in SandboxAI.
+servers:
+  - url: https://api.substratus.ai/sandboxai/v1
+paths:
+  /spaces/{space}/sandboxes/{name}:
+    get:
+      summary: Retrieve a sandbox.
+      operationId: getSandbox
+      parameters:
+        - name: space
+          in: path
+          required: true
+          description: The space the sandbox lives in.
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          description: The name of the sandbox to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sandbox'
+    delete:
+      summary: Delete a sandbox.
+      operationId: deleteSandbox
+      parameters:
+        - name: space
+          in: path
+          required: true
+          description: The space the sandbox lives in.
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          description: The name of the sandbox to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+  /spaces/{space}/sandboxes:
+    post:
+      summary: Create a new sandbox.
+      operationId: createSandbox
+      parameters:
+        - name: space
+          in: path
+          required: true
+          description: The space the sandbox should live in.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSandboxRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sandbox'
+  "/spaces/{space}/sandboxes/{name}/tools:run_ipython_cell":
+    post:
+      summary: "Invoke a cell in a stateful IPython (Jupyter) kernel."
+      operationId: "runIPythonCell"
+      parameters:
+      - name: space
+        in: path
+        required: true
+        description: The space the sandbox lives in.
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: true
+        description: The name of the sandbox.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunIPythonCellRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunIPythonCellResult'
+  "/spaces/{space}/sandboxes/{name}/tools:run_shell_command":
+    post:
+      summary: "Run a shell command."
+      operationId: "runShellCommand"
+      parameters:
+      - name: space
+        in: path
+        required: true
+        description: The space the sandbox lives in.
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: true
+        description: The name of the sandbox.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunShellCommandRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunShellCommandResult'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message.
+      required:
+      - message
+    CreateSandboxRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the sandbox. If not specified, will be generated automatically.
+          x-go-type-skip-optional-pointer: true
+        spec:
+          $ref: '#/components/schemas/SandboxSpec'
+      required:
+      - spec
+    Sandbox:
+      type: object
+      description: A sandbox environment for running code and commands.
+      properties:
+        name:
+          type: string
+          description: The name of the sandbox.
+          x-go-type-skip-optional-pointer: true
+        uid:
+          type: string
+          description: An identifier that is unique to the instance (in time) of the sandbox.
+          readOnly: true
+          x-go-name: UID
+          x-go-type-skip-optional-pointer: true
+        spec:
+          $ref: '#/components/schemas/SandboxSpec'
+        status:
+          $ref: '#/components/schemas/SandboxStatus'
+          readOnly: true
+      required:
+        - spec
+    SandboxSpec:
+      type: object
+      description: The specification of a Sandbox.
+      properties:
+        image: 
+          type: string
+          description: The container image the sandbox will run with.
+          x-go-type-skip-optional-pointer: true
+        env:
+          type: object
+          description: Environment variables for the sandbox.
+          additionalProperties:
+            type: string
+          x-go-type-skip-optional-pointer: true
+    SandboxStatus:
+      type: object
+      description: The status of the Sandbox.
+      properties: {}
+    RunIPythonCellRequest:
+      type: object
+      description: "The cell to run."
+      properties:
+        code:
+          type: string
+          description: The code to run in the IPython kernel.
+        split_output:
+          type: boolean
+          description: Set to true to split the output into stdout and stderr. If set, the output field in the response will be empty and the stdout and stderr fields will be populated.
+          default: false
+          x-go-type-skip-optional-pointer: true
+      required:
+      - code
+    RunIPythonCellResult:
+      type: object
+      description: The result from the IPython kernel.
+      properties:
+        output:
+          type: string
+          description: The stdout and stderr from the IPython kernel interleaved.
+          x-go-type-skip-optional-pointer: true
+        stdout:
+          type: string
+          description: The stdout from the IPython kernel.
+          x-go-type-skip-optional-pointer: true
+        stderr:
+          type: string
+          description: The stderr from the IPython kernel.
+          x-go-type-skip-optional-pointer: true
+    RunShellCommandRequest:
+      type: object
+      description: "The command to run."
+      properties:
+        command:
+          type: string
+          description: The command to execute.
+        split_output:
+          type: boolean
+          default: false
+          description: Set to true to split the output into stdout and stderr. If set, the output field in the response will be empty and the stdout and stderr fields will be populated.
+          x-go-type-skip-optional-pointer: true
+      required:
+      - command
+    RunShellCommandResult:
+      type: object
+      description: The result from the shell command.
+      properties:
+        output:
+          type: string
+          description: The stdout and stderr from the shell command.
+          x-go-type-skip-optional-pointer: true
+        stdout:
+          type: string
+          description: The stdout from the shell command
+          x-go-type-skip-optional-pointer: true
+        stderr:
+          type: string
+          description: The stderr from the shell command.
+          x-go-type-skip-optional-pointer: true

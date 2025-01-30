@@ -1,0 +1,6 @@
+{
+    "image": "placeholder-image",
+    "env": {
+        "MY_TEST_VAR": "test-value"
+    }
+}
