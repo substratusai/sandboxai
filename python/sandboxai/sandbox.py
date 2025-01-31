@@ -10,7 +10,7 @@ from threading import Lock
 
 log = getLogger(__name__)
 
-DEFAULT_IMAGE = "substratusai/sandboxai-box:v0.1.0"
+DEFAULT_IMAGE = "substratusai/sandboxai-box:v0.2.0"
 
 # Prevent multiple Sandbox() instances from attempting to start the
 # embedded server at the same time.
