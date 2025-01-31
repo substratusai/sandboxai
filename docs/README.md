@@ -50,8 +50,8 @@ Run a sandbox on your local machine.
 from sandboxai import Sandbox
 
 with Sandbox(embedded=True) as box:
-    print(box.run_ipython_cell("print('hi')"))
-    print(box.run_shell_command("ls /"))
+    print(box.run_ipython_cell("print('hi')").output)
+    print(box.run_shell_command("ls /").output)
 ```
 
 ## Contributing
