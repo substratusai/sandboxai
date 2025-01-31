@@ -32,7 +32,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-pure-python
-          path: dist/*
+          path: python/dist/*
 
   build-multiarch:
     runs-on: ${{ matrix.platform.os }}
