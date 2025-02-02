@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	v1 "github.com/substratusai/sandboxai/api/v1"
-	clientv1 "github.com/substratusai/sandboxai/client/v1"
+	v1 "github.com/substratusai/sandboxai/go/api/v1"
+	clientv1 "github.com/substratusai/sandboxai/go/client/v1"
 )
 
 func TestClientV1(t *testing.T) {

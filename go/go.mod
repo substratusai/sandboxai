@@ -1,4 +1,4 @@
-module github.com/substratusai/sandboxai
+module github.com/substratusai/sandboxai/go
 
 go 1.23.5
 

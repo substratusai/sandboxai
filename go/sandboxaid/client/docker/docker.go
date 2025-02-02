@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	sclient "github.com/substratusai/sandboxai/sandboxaid/client"
+	sclient "github.com/substratusai/sandboxai/go/sandboxaid/client"
 
 	stdlog "log"
 
@@ -18,7 +18,7 @@ import (
 	dclient "github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
-	v1 "github.com/substratusai/sandboxai/api/v1"
+	v1 "github.com/substratusai/sandboxai/go/api/v1"
 )
 
 var _ sclient.Client = &DockerClient{}

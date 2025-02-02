@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	v1 "github.com/substratusai/sandboxai/api/v1"
+	v1 "github.com/substratusai/sandboxai/go/api/v1"
 )
 
 var ErrSandboxNotFound = errors.New("sandbox not found")

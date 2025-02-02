@@ -14,8 +14,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/substratusai/sandboxai/sandboxaid/client/docker"
-	"github.com/substratusai/sandboxai/sandboxaid/handler"
+	"github.com/substratusai/sandboxai/go/sandboxaid/client/docker"
+	"github.com/substratusai/sandboxai/go/sandboxaid/handler"
 )
 
 func main() {
