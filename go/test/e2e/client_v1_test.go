@@ -106,3 +106,11 @@ func TestClientV1(t *testing.T) {
 		})
 	}
 }
+
+func TestClientV1NoOptions(t *testing.T) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	c := clientv1.NewClient(cfg.SandboxAIBaseURL)
+	require.NoError(t, c.CheckHealth(ctx))
+}

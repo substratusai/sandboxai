@@ -36,7 +36,29 @@ func NewClient(baseURL string, opts ...ClientOption) *Client {
 	for _, opt := range opts {
 		opt(c)
 	}
+	if c.httpc == nil {
+		c.httpc = http.DefaultClient
+	}
 	return c
+}
+
+func (c *Client) CheckHealth(ctx context.Context) error {
+	url := fmt.Sprintf("%s/healthz", c.BaseURL)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.httpc.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err := validateResponse(resp, http.StatusOK); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) CreateSandbox(ctx context.Context, space string, request *v1.CreateSandboxRequest) (*v1.Sandbox, error) {
