@@ -31,15 +31,17 @@ var log Logger = stdlog.New(os.Stderr, "", stdlog.LstdFlags)
 
 type Handler struct {
 	http.Handler
-	client client.Client
+	client       client.Client
+	defaultImage string
 }
 
-func NewHandler(client client.Client) *Handler {
+func NewHandler(client client.Client, defaultImage string) *Handler {
 	r := chi.NewRouter()
 
 	h := &Handler{
-		Handler: r,
-		client:  client,
+		Handler:      r,
+		client:       client,
+		defaultImage: defaultImage,
 	}
 
 	// Log to stderr.
@@ -75,6 +77,9 @@ func (h *Handler) v1PostSandbox(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&s); err != nil {
 		sendError(w, r, err, http.StatusBadRequest)
 		return
+	}
+	if s.Spec.Image == "" {
+		s.Spec.Image = h.defaultImage
 	}
 
 	created, err := h.client.CreateSandbox(r.Context(), space, &s)

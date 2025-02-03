@@ -18,6 +18,10 @@ import (
 	"github.com/substratusai/sandboxai/go/sandboxaid/handler"
 )
 
+const (
+	defaultDefaultImage = "substratusai/sandboxai-box:v0.2.0"
+)
+
 func main() {
 	host, ok := os.LookupEnv("SANDBOXAID_HOST")
 	if !ok {
@@ -39,6 +43,11 @@ func main() {
 	var deleteOnShutdown bool
 	if val, ok := os.LookupEnv("SANDBOXAID_DELETE_ON_SHUTDOWN"); ok {
 		deleteOnShutdown = strings.ToLower(strings.TrimSpace(val)) == "true"
+	}
+
+	defaultImage, ok := os.LookupEnv("SANDBOXAID_DEFAULT_IMAGE")
+	if !ok {
+		defaultImage = defaultDefaultImage
 	}
 
 	log := log.New(os.Stderr, "", log.LstdFlags)
@@ -86,7 +95,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", host, port),
-		Handler: handler.NewHandler(client),
+		Handler: handler.NewHandler(client, defaultImage),
 	}
 
 	go func() {

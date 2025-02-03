@@ -1,12 +1,15 @@
 import os
 import pytest
 from sandboxai import Sandbox
-from sandboxai.sandbox import DEFAULT_IMAGE
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 @pytest.fixture
 def box_image():
-    return os.environ.get("BOX_IMAGE", DEFAULT_IMAGE)
+    return os.environ.get("BOX_IMAGE")
 
 
 @pytest.fixture
@@ -53,10 +56,16 @@ def test_sandbox_lazy_create(box_image):
 
 def test_with_specified_name(box_image):
     try:
-        sb = Sandbox(embedded=True, lazy_create=True, image=box_image, name="test-name")
+        sb = Sandbox(embedded=True, image=box_image, name="test-name")
         assert sb.name == "test-name"
-        sb.create()
-        assert sb.name == "test-name"
+    finally:
+        sb.delete()
+
+
+def test_non_embedded(base_url):
+    try:
+        sb = Sandbox(base_url=base_url)
+        assert sb.image
     finally:
         sb.delete()
 
