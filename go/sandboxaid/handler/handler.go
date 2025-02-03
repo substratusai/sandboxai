@@ -12,8 +12,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	v1 "github.com/substratusai/sandboxai/api/v1"
-	"github.com/substratusai/sandboxai/sandboxaid/client"
+	v1 "github.com/substratusai/sandboxai/go/api/v1"
+	"github.com/substratusai/sandboxai/go/sandboxaid/client"
 
 	stdlog "log"
 )
