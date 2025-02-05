@@ -86,9 +86,11 @@ class Sandbox:
             self.name = ""
             self.image = ""
 
-    def run_ipython_cell(self, input: str) -> IPythonCellResult:
+    def run_ipython_cell(self, code: str) -> IPythonCellResult:
         """
         Runs an ipython cell in the sandbox.
+
+        @param code: The code to run in the sandbox.
         """
         if not self.name:
             self.create()
@@ -97,7 +99,7 @@ class Sandbox:
         result = self.client.run_ipython_cell(
             self.space,
             self.name,
-            v1Api.RunIPythonCellRequest(code=input, split_output=False),
+            v1Api.RunIPythonCellRequest(code=code, split_output=False),
         )  # type: ignore
         log.debug(f"IPython cell returned the output: {result.output}")
         result = IPythonCellResult(output=result.output or "")
