@@ -15,6 +15,7 @@ class SandboxIPythonTool(BaseTool):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Note that the sandbox only shuts down once the Python program exits.
         self._sandbox = Sandbox(embedded=True)
 
     def __del__(self):
@@ -36,6 +37,7 @@ class SandboxShellTool(BaseTool):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Note that the sandbox only shuts down once the Python program exits.
         self._sandbox = Sandbox(embedded=True)
 
     def __del__(self):
