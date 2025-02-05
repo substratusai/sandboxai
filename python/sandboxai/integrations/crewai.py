@@ -9,7 +9,7 @@ class RunIPythonCellArgs(BaseModel):
 
 
 class RunIPythonCell(BaseTool):
-    name: str = "Run"
+    name: str = "Run Python code"
     description: str = "Run python code and shell commands in an ipython cell. Shell commands should be on a new line and start with a !."
     args_schema: Type[BaseModel] = RunIPythonCellArgs
 
@@ -30,7 +30,7 @@ class RunShellCommandArgs(BaseModel):
 
 
 class RunShellCommand(BaseTool):
-    name: str = "Run"
+    name: str = "Run shell command"
     description: str = "Run bash shell commands in a sandbox."
     args_schema: Type[BaseModel] = RunShellCommandArgs
 
