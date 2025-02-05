@@ -4,14 +4,14 @@ from pydantic import BaseModel, Field
 from sandboxai import Sandbox
 
 
-class RunIPythonCellArgs(BaseModel):
+class SandboxIPythonToolArgs(BaseModel):
     code: str = Field(..., description="The code to execute in the ipython cell.")
 
 
-class RunIPythonCell(BaseTool):
+class SandboxIPythonTool(BaseTool):
     name: str = "Run Python code"
-    description: str = "Run python code and shell commands in an ipython cell. Shell commands should be on a new line and start with a !."
-    args_schema: Type[BaseModel] = RunIPythonCellArgs
+    description: str = "Run python code and shell commands in an ipython cell. Shell commands should be on a new line and start with a '!'."
+    args_schema: Type[BaseModel] = SandboxIPythonToolArgs
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,14 +25,14 @@ class RunIPythonCell(BaseTool):
         return result.output
 
 
-class RunShellCommandArgs(BaseModel):
+class SandboxShellToolArgs(BaseModel):
     command: str = Field(..., description="The bash commands to execute.")
 
 
-class RunShellCommand(BaseTool):
+class SandboxShellTool(BaseTool):
     name: str = "Run shell command"
     description: str = "Run bash shell commands in a sandbox."
-    args_schema: Type[BaseModel] = RunShellCommandArgs
+    args_schema: Type[BaseModel] = SandboxShellToolArgs
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
