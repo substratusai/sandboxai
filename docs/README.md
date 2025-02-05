@@ -1,29 +1,31 @@
 # SandboxAI
 
-*Unleash your AI agents ... in a box!*
+*Unleash your AI agents ... in a sandbox!*
 
-SandboxAI is an open source runtime for executing AI-generated Python code and shell commands inside dynamic containers.
+SandboxAI is an open source runtime for securely executing AI-generated Python code and shell commands in isolated sandboxes.
 
-* **Flexible control**
-  * Full-agency - Set the agent loose within the container
-  * Limited-agency - Give the agent access to specific commands
+* **Easy to self-host**
+  * Docker based single host backend
+  * Kubernetes based multi-node backend
+* ** Python SDK**
+  * `pip install sandboxai-client` is all you need.
 * **Container based**
   * You define the environment
   * Integrate with existing tooling
-* **Pluggable backends**
-  * Run on your local machine or a remote VM
-  * Run on your Kubernetes cluster (coming soon)
+* **Flexible control**
+  * Full-agency - Set the agent loose within the container
+  * Limited-agency - Give the agent access to specific commands
 * **Open REST API**
   * Use the official Python or Go client
   * Generate your own client from the API spec
 
-## Where does it fit?
+## Architecture
 
 SandboxAI was designed to fit nicely into your AI software stack.
 
 ![overview](./diagrams/overview.excalidraw.png)
 
-## Quickstart
+## Quickstart (Single-host)
 
 Make sure you have docker installed.
 
