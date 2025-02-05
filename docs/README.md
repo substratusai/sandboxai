@@ -47,7 +47,7 @@ Install the python client.
 pip install sandboxai-client
 ```
 
-Run a sandbox on your local machine.
+Run a sandbox on your local machine (using an embedded sandbox server to manage the docker containers).
 
 ```python
 from sandboxai import Sandbox
