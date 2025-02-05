@@ -18,9 +18,6 @@ class SandboxIPythonTool(BaseTool):
         # Note that the sandbox only shuts down once the Python program exits.
         self._sandbox = Sandbox(embedded=True)
 
-    def __del__(self):
-        self._sandbox.delete()
-
     def _run(self, code: str) -> str:
         result = self._sandbox.run_ipython_cell(code=code)
         return result.output
@@ -39,9 +36,6 @@ class SandboxShellTool(BaseTool):
         super().__init__(*args, **kwargs)
         # Note that the sandbox only shuts down once the Python program exits.
         self._sandbox = Sandbox(embedded=True)
-
-    def __del__(self):
-        self._sandbox.delete()
 
     def _run(self, command: str) -> str:
         result = self._sandbox.run_shell_command(command=command)
