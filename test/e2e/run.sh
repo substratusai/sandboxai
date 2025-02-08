@@ -50,5 +50,5 @@ go test -v .
 cd $repo_root
 
 cd $repo_root/python
-uv run pytest
+uv run pytest -o log_cli=true
 cd $repo_root

@@ -10,8 +10,6 @@ from threading import Lock
 
 log = getLogger(__name__)
 
-DEFAULT_IMAGE = "substratusai/sandboxai-box:v0.2.0"
-
 # Prevent multiple Sandbox() instances from attempting to start the
 # embedded server at the same time.
 embedded_mutex = Lock()
@@ -35,7 +33,7 @@ class Sandbox:
         lazy_create: bool = False,
         space: str = "default",
         name: str = None,
-        image: str = DEFAULT_IMAGE,
+        image: str = None,
         env: dict = None,
     ):
         """
